@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import random
 import numpy as np
+import math
 
 
 def composition_method(y0, q, N):
@@ -64,6 +65,34 @@ def uniformity_test(sequence):
     return x_squad
 
 
+def triangular(a,b,c, U):
+    F = (c-a)/(b-a)
+    if U<=F:
+        return a + math.sqrt(U * (b - a) * (c - a))
+    else:
+        return b - math.sqrt((1 - U) * (b - a) * (b - c))
+
+
+def exponential(y, lamb):
+    return -math.log10(y)/lamb
+
+
+def get_list_triangular(count, a, b, c):
+    new_list = list()
+    list_U = np.random.uniform(0,1,count)
+    for i in range(count):
+        new_list.append(triangular(a,b,c,list_U[i]))
+    return list_U, new_list
+
+
+def get_list_exponential(count, lamb):
+    new_list = list()
+    list_U = np.random.uniform(0,1,count)
+    for i in range(count):
+        new_list.append(exponential(list_U[i], lamb))
+    return list_U, new_list
+
+
 if __name__ == '__main__':
     sequence1 = np.random.uniform(0, 1, 500)
     period1 = period(sequence1)
@@ -97,15 +126,26 @@ if __name__ == '__main__':
     print('Период последовательности: ', period4)
     print('Равномерный тест: ', uniformity_test(sequence4))
 
-    create_hist(sequence1)
-    plt.title('Uniform')
+    rand_u, got_x = get_list_triangular(10000, -40, 100, 50)
+    rand_u_exp, got_x_exp = get_list_exponential(10000, -3.8)
+
+    # create_hist(sequence1)
+    # plt.title('Uniform')
+    # plt.show()
+    # create_hist(sequence2)
+    # plt.title('Произведений')
+    # plt.show()
+    # create_hist(sequence3)
+    # plt.title('Квадратов')
+    # plt.show()
+    # create_hist(sequence4)
+    # plt.title('Конгруэнтный')
+    # plt.show()
+
+    plt.scatter(rand_u, got_x)
+    plt.title('Треугольное распределение')
     plt.show()
-    create_hist(sequence2)
-    plt.title('Произведений')
-    plt.show()
-    create_hist(sequence3)
-    plt.title('Квадратов')
-    plt.show()
-    create_hist(sequence4)
-    plt.title('Конгруэнтный')
+
+    plt.scatter(rand_u_exp, got_x_exp)
+    plt.title('Экспоненциальное распределение')
     plt.show()
