@@ -21,18 +21,19 @@ def read_params(file_path):
         for line in file.readlines():
             if not(line == '\n'):
                 if 'Минимальное время наладки станка' in line:
-                    pass
+                    minimum_machine_setup_time = float(line[33:-2])
+                elif 'Максимальное время наладки станка' in line:
+                    maximum_machine_setup_time = float(line[34:-2])
+                    print(maximum_machine_setup_time)
 
 
-# print(np.random.normal(0.5, 0.1, details))
-# print(np.random.normal(20, 2, details))
-# print(np.random.uniform(0.2, 0.5, details))
-# print(np.random.uniform(0.1, 0.5, details))
+def modelling(minimum_machine_setup_time, maximum_machine_setup_time, mathematical_expectation_task_completion,
+              standard_deviation_task_completion, mathematical_expectation_breakdowns, standard_deviation_breakdowns,
+              minimum_machine_fixing_breakdown, maximum_machine_fixing_breakdown, user_count_details):
 
-def modelling():
     current_count_details = 0
     count_time = 0
-    count_details = 500
+    count_details = user_count_details
     check_breakdown = True
     all_breakdown_time = 0
     all_next_detail_time = 0
@@ -41,7 +42,7 @@ def modelling():
     complete = False
 
     while((len(stack_detail) != 0) or (not(current_count_details == count_details))):
-        time_complete = np.random.normal(0.5, 0.1)
+        time_complete = np.random.normal(mathematical_expectation_task_completion, standard_deviation_task_completion)
 
         if not(current_count_details == count_details):
             current_count_details += 1
@@ -49,14 +50,13 @@ def modelling():
             time_next_detail = random.expovariate(1)
             all_next_detail_time += time_next_detail
 
-
         if check_breakdown:
-            breakdown_time = np.random.normal(20, 2)
+            breakdown_time = np.random.normal(mathematical_expectation_breakdowns, standard_deviation_breakdowns)
             all_breakdown_time += breakdown_time
             check_breakdown = False
 
         if len(stack_detail) > 0:
-            count_time += np.random.uniform(0.2, 0.5)
+            count_time += np.random.uniform(minimum_machine_setup_time, maximum_machine_setup_time)
             count_time += time_complete
             complete = True
 
@@ -67,7 +67,7 @@ def modelling():
 
             count_time = all_breakdown_time
             check_breakdown = True
-            count_time += np.random.uniform(0.1, 0.5)
+            count_time += np.random.uniform(minimum_machine_fixing_breakdown, maximum_machine_fixing_breakdown)
 
         if complete:
             complete = False
@@ -79,14 +79,12 @@ def modelling():
             time_next_detail = random.expovariate(1)
             all_next_detail_time += time_next_detail
 
-        print(current_count_details, stack_detail)
-
-
     print('Время выполнения задания: ' + str(count_time) + ' ч.', 'Количество поломок: ' + str(count_breakdown), sep='\n')
 
 
 def main():
-    modelling()
+    print(read_params('params'))
+    # modelling()
     # list = [random.expovariate(1) for i in range(0,500)]
     # print(sum(list)/500)
 
