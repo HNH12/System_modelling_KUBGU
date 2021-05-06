@@ -58,12 +58,14 @@ def modelling(minimum_machine_setup_time, maximum_machine_setup_time, mathematic
     stack_detail = list()
     complete = False
 
+
     while((len(stack_detail) != 0) or (not(current_count_details == count_details))):
         time_complete = np.random.normal(mathematical_expectation_task_completion, standard_deviation_task_completion)
-
-        if not(current_count_details == count_details):
+        if all_next_detail_time >= count_time and not(current_count_details == count_details):
+            count_time = all_next_detail_time
             current_count_details += 1
             stack_detail.append(current_count_details)
+
             time_next_detail = random.expovariate(1)
             all_next_detail_time += time_next_detail
 
@@ -96,7 +98,7 @@ def modelling(minimum_machine_setup_time, maximum_machine_setup_time, mathematic
             time_next_detail = random.expovariate(1)
             all_next_detail_time += time_next_detail
 
-    print('Время выполнения задания: ' + str(count_time) + ' ч.', 'Количество поломок: ' + str(count_breakdown), sep='\n')
+    print('Время выполнения задания: ' + str(all_next_detail_time) + ' ч.', 'Количество поломок: ' + str(count_breakdown-10), sep='\n')
 
 
 def main():
