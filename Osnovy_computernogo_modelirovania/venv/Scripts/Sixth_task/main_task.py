@@ -51,6 +51,7 @@ def modelling():
         if workload_first_evm == 0 and not check_error_first_evm:
             if check_error_second_evm:
                 check_error_second_evm = False
+                workload_second_evm -= 1
             workload_first_evm += 1
             if queue_on_hold == 0:
                 all_time += 10
@@ -70,6 +71,7 @@ def modelling():
         else:
             if check_error_first_evm:
                 check_error_first_evm = False
+                workload_first_evm -= 1
             workload_second_evm += 1
             if queue_on_hold == 0:
                 all_time += 10
