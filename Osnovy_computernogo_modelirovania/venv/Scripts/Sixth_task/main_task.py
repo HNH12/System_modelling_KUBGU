@@ -6,7 +6,7 @@ def modelling():
     all_time = 2
     task_receipt_period = 2
     registration_time = 12
-    number_tasks_received_during_processing = registration_time / task_receipt_period
+    number_tasks_received_during_processing = registration_time/task_receipt_period
     error_probability = 0.7
     time_resolve_error = 3
     time_complete = 10
@@ -30,24 +30,27 @@ def modelling():
         # print(counter, queue_on_hold)
         # print('В очереди на регистрацию: ')
         # print('Время', all_time, 'минут')
-        if workload_first_evm > workload_second_evm and check_registration and check_error_second_evm:
-            workload_second_evm += 1
-            if queue_on_hold == 0:
-                all_time += 10
-            print('Выполнение задания на второй ЭВМ')
-            if random.random() < error_probability and not check_error_second_evm:
-                check_error_second_evm = True
-                check_error_second_complete = True
-                all_time += 3
-                workload_second_evm -= 1
-                print('Ошибка!')
-                current_task -= 1
-                print('Исправление ошибки')
-            else:
-                workload_second_evm -= 1
-                check_error_second_complete = False
+        current_task += 1
+        if check_error_first_evm or check_error_second_evm:
+            print('Повтор выполнения', current_task, 'задания')
+        else:
+            print('Текущее задание', current_task)
+        if not check_error_first_evm and not check_error_second_evm:
+            if (counter + 6 > count_task) and counter < count_task:
+                differ = count_task - counter
+                counter += differ
+                queue_on_hold += differ
+            elif counter < count_task:
+                counter += 6
+                queue_on_hold += 6
+            if queue_on_hold != 0:
+                queue_on_hold -= 1
+                all_time += registration_time
+                print('Регистрация')
+
+        if workload_first_evm == 0 and not check_error_first_evm:
+            if check_error_second_evm:
                 check_error_second_evm = False
-        elif check_registration and check_error_first_evm:
             workload_first_evm += 1
             if queue_on_hold == 0:
                 all_time += 10
@@ -65,6 +68,8 @@ def modelling():
                 check_error_first_evm = False
                 print()
         else:
+            if check_error_first_evm:
+                check_error_first_evm = False
             workload_second_evm += 1
             if queue_on_hold == 0:
                 all_time += 10
@@ -82,27 +87,9 @@ def modelling():
                 check_error_second_complete = False
                 check_error_second_evm = False
 
-        current_task += 1
-        if check_error_first_evm or check_error_second_evm:
-            print('Повтор выполнения', current_task, 'задания')
-        else:
-            print('Текущее задание', current_task)
-        if not check_error_first_evm and not check_error_second_evm:
-            if (counter + 6 > count_task) and counter < count_task:
-                differ = count_task - counter
-                counter += differ
-                queue_on_hold += differ
-            elif counter < count_task:
-                counter += 6
-                queue_on_hold += 6
-            if queue_on_hold != 0:
-                queue_on_hold -= 1
-                all_time += registration_time
-                check_registration = True
-                print('Регистрация')
         # if not check_error_first_evm or not check_error_second_evm:
     print()
-    print(all_time / 60)
+    print(all_time/60)
 
 
 def main():
