@@ -24,46 +24,44 @@ def modelling():
     count_task = 100
     counter = 1
     queue_on_hold = 1
-    current_task = 0
+    current_task = 1
 
-    while (counter <= count_task and queue_on_hold) or check_error_second_evm or check_error_first_evm != 0:
+    last_task = 0
+
+    while (counter <= count_task and queue_on_hold):
         # print(counter, queue_on_hold)
         # print('В очереди на регистрацию: ')
         # print('Время', all_time, 'минут')
-        current_task += 1
-        if check_error_first_evm or check_error_second_evm:
-            print('Повтор выполнения', current_task, 'задания')
-        else:
-            print('Текущее задание', current_task)
-        if not check_error_first_evm and not check_error_second_evm:
-            if (counter + 6 > count_task) and counter < count_task:
-                differ = count_task - counter
-                counter += differ
-                queue_on_hold += differ
-            elif counter < count_task:
-                counter += 6
-                queue_on_hold += 6
-            if queue_on_hold != 0:
-                queue_on_hold -= 1
-                all_time += registration_time
-                print('Регистрация')
-
-        if workload_first_evm == 0 and not check_error_first_evm:
-            if check_error_second_evm:
-                check_error_second_evm = False
-                workload_second_evm -= 1
+        print('Текущее задание', current_task)
+        if (counter + 6 > count_task) and counter < count_task:
+            differ = count_task - counter
+            counter += differ
+            queue_on_hold += differ
+        elif counter < count_task:
+            counter += 6
+            queue_on_hold += 6
+        if queue_on_hold != 0:
+            queue_on_hold -= 1
+            all_time += registration_time
+            print('Регистрация')
+        if workload_first_evm <= workload_second_evm and not check_error_first_evm:
             workload_first_evm += 1
             if queue_on_hold == 0:
                 all_time += 10
             print('Выполнение задания на первой ЭВМ')
-            if random.random() < error_probability and not check_error_first_evm:
+            if random.random() < error_probability:
+                last_task = current_task
                 check_error_first_evm = True
-                workload_first_evm -= 1
                 all_time += 3
                 print('Ошибка!')
-                current_task -= 1
                 print('Исправление ошибки')
+                print('Повтор выполнения', current_task, 'задания')
+                current_task += 1
+                workload_first_evm -= 1
+                check_error_first_complete = False
+                check_error_first_evm = True
             else:
+                current_task += 1
                 workload_first_evm -= 1
                 check_error_first_complete = False
                 check_error_first_evm = False
@@ -71,24 +69,25 @@ def modelling():
         else:
             if check_error_first_evm:
                 check_error_first_evm = False
-                workload_first_evm -= 1
             workload_second_evm += 1
             if queue_on_hold == 0:
                 all_time += 10
             print('Выполнение задания на второй ЭВМ')
-            if random.random() < error_probability and not check_error_second_evm:
+            if random.random() < error_probability:
                 check_error_second_evm = True
                 check_error_second_complete = True
-                all_time += 3
-                workload_second_evm -= 1
                 print('Ошибка!')
-                current_task -= 1
-                print('Исправление ошибки')
+                all_time += 3
+                print('Повтор выполнения', current_task, 'задания')
+                current_task += 1
+                workload_second_evm -= 1
+                check_error_second_complete = False
             else:
+                current_task += 1
                 workload_second_evm -= 1
                 check_error_second_complete = False
                 check_error_second_evm = False
-
+        print()
         # if not check_error_first_evm or not check_error_second_evm:
     print()
     print(all_time/60)
